@@ -1,4 +1,4 @@
-import { useState } from 'react';
+.import { useState } from 'react';
 import { motion } from 'motion/react';
 import { 
   Edit, 
@@ -21,9 +21,9 @@ import { Progress } from './ui/progress';
 import { useAuth } from '../App';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 
-// Mock data for the profile
+// Mock data for the profile with updated images
 const mockProfileData = {
-  coverImage: "https://images.unsplash.com/photo-1622258418550-46a51f29f084?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxiYW5nYWxvcmUlMjB0ZWNoJTIwb2ZmaWNlJTIwY29kaW5nJTIwd29ya3NwYWNlfGVufDF8fHx8MTc1NzQ5NDk2N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+  coverImage: "https://i.imgur.com/3ZQ3ZQZ.jpg", // Indian professional background image with Ghibli effect
   bio: "Full-stack developer working at Flipkart, Bangalore. 4+ years experience in React, Node.js, and Java. Alumni of IIT Delhi. Love mentoring junior developers and contributing to open source.",
   location: "Bengaluru, Karnataka",
   joinDate: "March 2022",
@@ -102,7 +102,7 @@ export default function ProfilePage() {
             <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between mb-6">
               <div className="flex flex-col sm:flex-row sm:items-end space-y-4 sm:space-y-0 sm:space-x-6">
                 <Avatar className="w-32 h-32 border-4 border-white/20 shadow-xl">
-                  <AvatarImage src={user?.avatar} className="object-cover" />
+                  <AvatarImage src="https://i.imgur.com/4AiXzf8.png" className="object-cover" />
                   <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-600 text-white text-2xl">
                     {user?.name.charAt(0)}
                   </AvatarFallback>
@@ -131,11 +131,11 @@ export default function ProfilePage() {
                     {[1, 2, 3, 4, 5].map((star) => (
                       <Star
                         key={star}
-                        className={`w-5 h-5 ${
+                        className={\`w-5 h-5 \${
                           star <= Math.floor(mockProfileData.stats.rating)
                             ? 'text-yellow-400 fill-current'
                             : 'text-gray-400'
-                        }`}
+                        }\`}
                       />
                     ))}
                     <span className="text-white ml-2">
@@ -206,7 +206,7 @@ export default function ProfilePage() {
           <StatCard
             icon={Target}
             label="Current Streak"
-            value={`${mockProfileData.stats.streakDays} days`}
+            value={\`\${mockProfileData.stats.streakDays} days\`}
           />
           <StatCard
             icon={Star}
@@ -281,7 +281,7 @@ export default function ProfilePage() {
                   {mockProfileData.recentBadges.map((badge, index) => (
                     <motion.div
                       key={badge.name}
-                      className={`relative p-4 bg-gradient-to-br ${badge.color} rounded-xl group cursor-pointer`}
+                      className={\`relative p-4 bg-gradient-to-br \${badge.color} rounded-xl group cursor-pointer\`}
                       whileHover={{ scale: 1.05, rotate: 2 }}
                       whileTap={{ scale: 0.95 }}
                       initial={{ opacity: 0, y: 20 }}
