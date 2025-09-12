@@ -144,3 +144,89 @@ export default function TokenSelector({
                       : 'hover:bg-muted'
                   }`}
                 >
+                  <div className="w-8 h-8 rounded-full overflow-hidden bg-muted flex items-center justify-center">
+                    {token.icon.startsWith('http') ? (
+                      <img src={token.icon} alt={token.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <Coins className="w-4 h-4" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate">{token.name}</p>
+                    <p className="text-sm text-muted-foreground truncate">{token.symbol}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-medium">{token.balance.toFixed(4)}</p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <Coins className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                <p>No tokens found</p>
+              </div>
+            )}
+          </div>
+
+          {/* Add Custom Token */}
+          <div className="mt-4">
+            <Dialog open={showAddForm} onOpenChange={setShowAddForm}>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="w-full">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Custom Token
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Add Custom Token</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="name">Token Name</Label>
+                    <Input
+                      id="name"
+                      value={newToken.name}
+                      onChange={(e) => setNewToken({ ...newToken, name: e.target.value })}
+                      placeholder="e.g., My Token"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="symbol">Symbol</Label>
+                    <Input
+                      id="symbol"
+                      value={newToken.symbol}
+                      onChange={(e) => setNewToken({ ...newToken, symbol: e.target.value })}
+                      placeholder="e.g., MTK"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="icon">Icon URL</Label>
+                    <Input
+                      id="icon"
+                      value={newToken.icon}
+                      onChange={(e) => setNewToken({ ...newToken, icon: e.target.value })}
+                      placeholder="https://..."
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="contract">Contract Address</Label>
+                    <Input
+                      id="contract"
+                      value={newToken.contractAddress}
+                      onChange={(e) => setNewToken({ ...newToken, contractAddress: e.target.value })}
+                      placeholder="0x..."
+                    />
+                  </div>
+                  <Button onClick={handleAddToken} className="w-full">
+                    Add Token
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
