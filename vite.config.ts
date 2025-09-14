@@ -10,19 +10,44 @@ const __dirname = dirname(__filename);
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 5001,
+    port: 5000,
     strictPort: true,
+    host: true,
+    open: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:3000', // Your backend server URL
+        target: 'http://localhost:3000',
         changeOrigin: true,
         secure: false,
+        rewrite: (path) => path.replace(/^\/api/, '')
       },
     },
   },
   resolve: {
-    alias: {
-      '@': resolve(__dirname, './src'),
+    alias: [
+      {
+        find: '@',
+        replacement: resolve(__dirname, './src')
+      },
+      {
+        // This is needed for Radix UI components
+        find: /^@radix-ui\/(.*)$/,
+        replacement: '@radix-ui/$1',
+      },
+    ],
+    extensions: ['.js', '.jsx', '.ts', '.tsx', '.json']
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      // Node.js global to browser globalThis
+      define: {
+        global: 'globalThis',
+      },
+    },
+  },
+  build: {
+    commonjsOptions: {
+      transformMixedEsModules: true,
     },
   },
 });

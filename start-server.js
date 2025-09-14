@@ -14,7 +14,9 @@ function isPortFree(port) {
 
 async function findFreePort(startPort) {
   let port = startPort;
-  while (port < 65535) {
+  while (port < 6553
+    
+    5) {
     if (await isPortFree(port)) {
       return port;
     }
