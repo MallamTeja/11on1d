@@ -1,5 +1,5 @@
-.import { useState } from 'react';
-import { motion } from 'motion/react';
+import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { 
   Edit, 
   MapPin, 
@@ -19,11 +19,72 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Progress } from './ui/progress';
 import { useAuth } from '../App';
-import { ImageWithFallback } from './figma/ImageWithFallback';
+
+// Types
+interface BadgeType {
+  name: string;
+  icon: string;
+  color: string;
+}
+
+interface StatsType {
+  problemsSolved: number;
+  mentoringHours: number;
+  rating: number;
+  connections: number;
+  badges: number;
+  streakDays: number;
+}
+
+interface ProfileData {
+  coverImage: string;
+  bio: string;
+  location: string;
+  joinDate: string;
+  skills: string[];
+  stats: StatsType;
+  recentBadges: BadgeType[];
+}
+
+interface StatCardProps {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  value: string | number;
+  trend?: string;
+}
+
+// Simple ImageWithFallback component
+const ImageWithFallback: React.FC<{
+  src: string;
+  fallback?: string;
+  alt: string;
+  className?: string;
+  [key: string]: any;
+}> = ({ src, fallback, alt, className, ...props }) => {
+  const [imgSrc, setImgSrc] = useState(src);
+  const [errored, setErrored] = useState(false);
+
+  const onError = () => {
+    if (!errored && fallback) {
+      setErrored(true);
+      setImgSrc(fallback);
+    }
+  };
+
+  return (
+    <img
+      src={imgSrc}
+      onError={onError}
+      alt={alt}
+      className={className}
+      {...props}
+    />
+  );
+};
 
 // Mock data for the profile with updated images
-const mockProfileData = {
-  coverImage: "https://i.imgur.com/3ZQ3ZQZ.jpg", // Indian professional background image with Ghibli effect
+const mockProfileData: ProfileData = {
+  coverImage: "https://i.imgur.com/3ZQ3ZQZ.jpg",
   bio: "Full-stack developer working at Flipkart, Bangalore. 4+ years experience in React, Node.js, and Java. Alumni of IIT Delhi. Love mentoring junior developers and contributing to open source.",
   location: "Bengaluru, Karnataka",
   joinDate: "March 2022",
@@ -44,11 +105,11 @@ const mockProfileData = {
   ]
 };
 
-export default function ProfilePage() {
+const ProfilePage: React.FC = () => {
   const { user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
 
-  const StatCard = ({ icon: Icon, label, value, trend }: any) => (
+  const StatCard: React.FC<StatCardProps> = ({ icon: Icon, label, value, trend }) => (
     <motion.div
       className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 hover:bg-white/15 transition-all duration-300"
       whileHover={{ scale: 1.02 }}
@@ -84,6 +145,7 @@ export default function ProfilePage() {
               src={mockProfileData.coverImage}
               alt="Cover"
               className="w-full h-full object-cover"
+              fallback="https://via.placeholder.com/1200x400/1e293b/64748b?text=Cover+Image"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
             
@@ -102,15 +164,19 @@ export default function ProfilePage() {
             <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between mb-6">
               <div className="flex flex-col sm:flex-row sm:items-end space-y-4 sm:space-y-0 sm:space-x-6">
                 <Avatar className="w-32 h-32 border-4 border-white/20 shadow-xl">
-                  <AvatarImage src="https://i.imgur.com/4AiXzf8.png" className="object-cover" />
+                  <AvatarImage 
+                    src="https://i.imgur.com/4AiXzf8.png" 
+                    alt={`${user?.name || 'User'}'s avatar`}
+                    className="object-cover" 
+                  />
                   <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-600 text-white text-2xl">
-                    {user?.name.charAt(0)}
+                    {user?.name?.charAt(0) || 'U'}
                   </AvatarFallback>
                 </Avatar>
                 
                 <div className="space-y-2">
                   <div className="flex items-center space-x-3">
-                    <h1 className="text-3xl text-white">{user?.name}</h1>
+                    <h1 className="text-3xl text-white">{user?.name || 'User'}</h1>
                     {user?.isMentor && (
                       <Badge className="bg-gradient-to-r from-purple-500 to-blue-500 text-white border-0">
                         Mentor
@@ -131,11 +197,11 @@ export default function ProfilePage() {
                     {[1, 2, 3, 4, 5].map((star) => (
                       <Star
                         key={star}
-                        className={\`w-5 h-5 \${
+                        className={`w-5 h-5 ${
                           star <= Math.floor(mockProfileData.stats.rating)
                             ? 'text-yellow-400 fill-current'
                             : 'text-gray-400'
-                        }\`}
+                        }`}
                       />
                     ))}
                     <span className="text-white ml-2">
@@ -162,7 +228,10 @@ export default function ProfilePage() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: index * 0.1 }}
                   >
-                    <Badge variant="secondary" className="bg-white/10 border-white/20 text-blue-100 hover:bg-white/20 transition-all duration-200">
+                    <Badge 
+                      variant="secondary" 
+                      className="bg-white/10 border-white/20 text-blue-100 hover:bg-white/20 transition-all duration-200"
+                    >
                       {skill}
                     </Badge>
                   </motion.div>
@@ -206,7 +275,7 @@ export default function ProfilePage() {
           <StatCard
             icon={Target}
             label="Current Streak"
-            value={\`\${mockProfileData.stats.streakDays} days\`}
+            value={`${mockProfileData.stats.streakDays} days`}
           />
           <StatCard
             icon={Star}
